@@ -1,18 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #f3fbff;
+  --foreground: #0f172a;
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at 10% 0%, #dbeafe 0%, transparent 35%),
+    radial-gradient(circle at 100% 0%, #ccfbf1 0%, transparent 30%),
+    var(--background);
   color: var(--foreground);
 }
