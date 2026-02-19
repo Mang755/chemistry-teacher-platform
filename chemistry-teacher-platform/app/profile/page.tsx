@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type Mode = "login" | "register";
 
@@ -16,6 +16,21 @@ export default function ProfilePage() {
     [mode]
   );
 
+  useEffect(() => {
+    const raw = localStorage.getItem("chemteach_user");
+    if (!raw) return;
+    try {
+      const saved = JSON.parse(raw) as {
+        name?: string;
+        email?: string;
+      };
+      if (saved?.name) setName(saved.name);
+      if (saved?.email) setEmail(saved.email);
+    } catch {
+      // ignore broken local data
+    }
+  }, []);
+
   function onSubmit(e: FormEvent) {
     e.preventDefault();
 
@@ -24,8 +39,21 @@ export default function ProfilePage() {
       return;
     }
 
+    const existingRaw = localStorage.getItem("chemteach_user");
+    let existingName = "";
+    if (existingRaw) {
+      try {
+        const parsed = JSON.parse(existingRaw) as { name?: string };
+        existingName = (parsed?.name ?? "").trim();
+      } catch {
+        existingName = "";
+      }
+    }
+
+    const resolvedName = mode === "register" ? name.trim() : name.trim() || existingName;
+
     const payload = {
-      name: name.trim(),
+      name: resolvedName,
       email: email.trim(),
       password,
       updatedAt: new Date().toISOString(),
@@ -33,12 +61,13 @@ export default function ProfilePage() {
 
     if (typeof window !== "undefined") {
       localStorage.setItem("chemteach_user", JSON.stringify(payload));
+      window.dispatchEvent(new Event("chemteach-user-updated"));
     }
 
     setMessage(
       mode === "register"
-        ? "Тіркелу сәтті орындалды (local режим)."
-        : "Кіру сәтті орындалды (local режим)."
+        ? `Тіркелу сәтті орындалды. Қош келдіңіз, ${resolvedName || "пайдаланушы"}!`
+        : `Кіру сәтті орындалды. Қош келдіңіз, ${resolvedName || "пайдаланушы"}!`
     );
   }
 
