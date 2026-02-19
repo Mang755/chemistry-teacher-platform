@@ -65,9 +65,12 @@ export default function RootLayout({
               <span className="text-sm text-slate-600">
                 Химия платформасы
               </span>
-              <button className="px-4 py-2 rounded-lg text-white bg-gradient-to-r from-indigo-600 to-blue-500 hover:brightness-105">
+              <Link
+                href="/profile"
+                className="px-4 py-2 rounded-lg text-white bg-gradient-to-r from-indigo-600 to-blue-500 hover:brightness-105"
+              >
                 Профиль
-              </button>
+              </Link>
             </header>
 
             {/* Page Content */}
