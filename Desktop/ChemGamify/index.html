@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ChemGamify</title>
+  <style>
+    :root {
+      --bg: #f5faff;
+      --card: #ffffff;
+      --line: #cfe0f5;
+      --text: #123055;
+      --muted: #4d6788;
+      --accent: #1e88e5;
+      --accent2: #22c55e;
+      --soft: #eef6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 12% 0%, #def0ff 0%, transparent 32%),
+        radial-gradient(circle at 88% 0%, #dffff1 0%, transparent 28%),
+        var(--bg);
+      color: var(--text);
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 26px 16px 40px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 26px rgba(30, 80, 140, 0.08);
+    }
+    h1 { margin: 0 0 6px; font-size: clamp(30px, 4.4vw, 44px); }
+    .lead { margin: 0 0 14px; color: var(--muted); font-size: 18px; line-height: 1.45; }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      margin-bottom: 12px;
+      border: 0;
+      cursor: pointer;
+    }
+    .section { margin-top: 12px; }
+    .section-title { margin: 0 0 8px; font-size: 16px; color: #1a4b84; }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .feature-btn {
+      width: 100%;
+      text-align: left;
+      background: #f7fbff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      cursor: pointer;
+    }
+    .feature-btn:hover { background: #eefdff; }
+    .feature-btn.active {
+      border-color: #7fb8f3;
+      box-shadow: 0 0 0 2px #d9ecff inset;
+      color: #214f86;
+    }
+    .tasks {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 12px;
+    }
+    .tasks h3 { margin: 0 0 8px; color: #1a4b84; font-size: 15px; }
+    .tasks ul { margin: 0; padding-left: 20px; color: var(--muted); line-height: 1.55; }
+    .tasks li { margin-bottom: 4px; }
+    .actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-lite {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    @media (max-width: 820px) {
+      .features { grid-template-columns: 1fr; }
+      .card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="card">
+      <h1>ChemGamify</h1>
+      <p class="lead">Химияны ойын арқылы үйрен. Оқушыға мотивация, мұғалімге басқару мен нәтиже.</p>
+      <a class="btn" href="game.html">Ойынды бастау</a>
+
+      <section class="section">
+        <h2 class="section-title">Геймификация Идеялары</h2>
+        <div class="features" id="ideaGrid">
+          <button class="feature-btn active" data-idea="xp"><b>XP және деңгей:</b> әр дұрыс жауапқа XP, деңгей артқан сайын жаңа атақ.</button>
+          <button class="feature-btn" data-idea="league"><b>Weekly League:</b> апта сайын сынып ішіндегі үздік 3 оқушы марапатталады.</button>
+          <button class="feature-btn" data-idea="boss"><b>Босс-раунд:</b> тарау соңында күрделі аралас турнир (тест+Блум+STEM).</button>
+          <button class="feature-btn" data-idea="mission"><b>Teacher Mission:</b> мұғалім апта мақсатын қояды (мысалы, 2000 сынып XP).</button>
+          <button class="feature-btn" data-idea="quest"><b>Quest картасы:</b> тараулар карта түрінде ашылады, өткен сайын белгі жанады.</button>
+          <button class="feature-btn" data-idea="fair"><b>Адал ойын ұпайы:</b> толық қатысу, уақытында аяқтау, тұрақты белсенділік үшін бонус.</button>
+        </div>
+
+        <div class="tasks" id="taskBox">
+          <h3 id="taskTitle">XP және деңгей - тапсырмалар</h3>
+          <ul id="taskList"></ul>
+          <div class="actions">
+            <a class="btn-lite" id="openGameLink" href="game.html">Осы режиммен ойынға өту</a>
+            <button class="btn-lite" id="copyTasksBtn" type="button">Тапсырмаларды көшіру</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const IDEAS = {
+      xp: {
+        title: "XP және деңгей",
+        mode: "quiz15",
+        tasks: [
+          "15 сұрақтың кемі 10-ына дұрыс жауап бер.",
+          "Кемі 120 XP жина.",
+          "2 тарауда қатарынан ойын аяқта.",
+          "Кемі 1 рет топ-3-ке кір."
+        ]
+      },
+      league: {
+        title: "Weekly League",
+        mode: "mix",
+        tasks: [
+          "Апта ішінде 3 рет ойна.",
+          "Жалпы ұпайды кемі 250-ге жеткіз.",
+          "Сынып рейтингісінде топ-3-ке кіруге тырыс.",
+          "Блум және STEM режимін кемі 1 реттен аяқта."
+        ]
+      },
+      boss: {
+        title: "Босс-раунд",
+        mode: "mix",
+        tasks: [
+          "Аралас турнирді (15+5+5) толық аяқта.",
+          "Кемі 70% дәлдікке жет.",
+          "Босс-раундта 1 қате ғана жіберу (челлендж).",
+          "Финалда сынып бойынша орын ал."
+        ]
+      },
+      mission: {
+        title: "Teacher Mission",
+        mode: "quiz15",
+        tasks: [
+          "Мұғалім апталық мақсат қояды (мысалы 2000 XP).",
+          "Әр оқушы кемі 2 рет қатыссын.",
+          "Сыныптың орташа ұпайын 100+ қылу.",
+          "Апта соңында нәтижені рейтингпен талқылау."
+        ]
+      },
+      quest: {
+        title: "Quest картасы",
+        mode: "bloom5",
+        tasks: [
+          "I тараудан бастап ретімен өт.",
+          "Әр тарауда кемі 1 режим аяқта.",
+          "Өткен тарауға 'completed' белгісін қой.",
+          "3 тарауды қатар аяқтасаң бонус ал."
+        ]
+      },
+      fair: {
+        title: "Адал ойын ұпайы",
+        mode: "stem5",
+        tasks: [
+          "Ойынды соңына дейін аяқта.",
+          "Уақытында жауап бер және үзіліссіз қатыс.",
+          "Бір сабақта 2 режимді аяқта.",
+          "Тұрақты белсенділік үшін +бонус ұпай ал."
+        ]
+      }
+    };
+
+    const ideaGrid = document.getElementById("ideaGrid");
+    const taskTitle = document.getElementById("taskTitle");
+    const taskList = document.getElementById("taskList");
+    const openGameLink = document.getElementById("openGameLink");
+    const copyTasksBtn = document.getElementById("copyTasksBtn");
+
+    function renderIdea(key) {
+      const data = IDEAS[key];
+      taskTitle.textContent = `${data.title} - тапсырмалар`;
+      taskList.innerHTML = data.tasks.map((t) => `<li>${t}</li>`).join("");
+      openGameLink.href = `game.html?idea=${encodeURIComponent(key)}&mode=${encodeURIComponent(data.mode)}`;
+      ideaGrid.querySelectorAll(".feature-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.idea === key);
+      });
+    }
+
+    ideaGrid.querySelectorAll(".feature-btn").forEach((btn) => {
+      btn.addEventListener("click", () => renderIdea(btn.dataset.idea));
+    });
+
+    copyTasksBtn.addEventListener("click", async () => {
+      const text = `${taskTitle.textContent}\n- ${Array.from(taskList.querySelectorAll("li")).map((li) => li.textContent).join("\n- ")}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        copyTasksBtn.textContent = "Көшірілді";
+        setTimeout(() => (copyTasksBtn.textContent = "Тапсырмаларды көшіру"), 1200);
+      } catch (_) {
+        copyTasksBtn.textContent = "Көшіру болмады";
+        setTimeout(() => (copyTasksBtn.textContent = "Тапсырмаларды көшіру"), 1200);
+      }
+    });
+
+    renderIdea("xp");
+  </script>
+</body>
+</html>

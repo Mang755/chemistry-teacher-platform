@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ChemGamify - Тарау және Тақырыптар</title>
+  <style>
+    :root {
+      --bg: #f3f8ff;
+      --card: #ffffff;
+      --line: #c9dff7;
+      --text: #10365e;
+      --muted: #4b6d93;
+      --a: #1e88e5;
+      --b: #22c55e;
+      --soft: #eef6ff;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 0%, #dff0ff 0%, transparent 30%),
+        radial-gradient(circle at 92% 0%, #defee9 0%, transparent 28%),
+        var(--bg);
+    }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 16px; }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .title { font-size: 30px; font-weight: 800; }
+    .back {
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: #fff;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 8px 18px rgba(30, 80, 140, 0.06);
+    }
+    .full { grid-column: 1 / -1; }
+    h2 {
+      margin: 0 0 10px;
+      color: #184f8d;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .field { flex: 1 1 160px; min-width: 140px; }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+    input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+    }
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn:hover { background: var(--soft); }
+    .btn.main {
+      background: linear-gradient(90deg, var(--a), var(--b));
+      border-color: transparent;
+      color: #fff;
+    }
+    .btn.warn {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+    .note { font-size: 13px; color: var(--muted); }
+    .ok { color: #166534; font-weight: 700; }
+    .bad { color: var(--danger); font-weight: 700; }
+    .stats { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      background: var(--soft);
+      color: var(--muted);
+    }
+
+    .chapter-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .chapter {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfdff;
+      overflow: hidden;
+    }
+    .chapter-head {
+      width: 100%;
+      text-align: left;
+      border: 0;
+      background: #e9f4ff;
+      color: #123d70;
+      padding: 14px 14px;
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .chapter-head:hover { background: #deeeff; }
+    .chapter-body {
+      padding: 12px;
+      display: none;
+      border-top: 1px solid var(--line);
+    }
+    .chapter.open .chapter-body { display: block; }
+    .topic-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .topic-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #154a84;
+      margin-bottom: 6px;
+    }
+    .task-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .mode-btn {
+      padding: 11px 10px;
+      font-size: 14px;
+      border-radius: 12px;
+    }
+
+    .q {
+      margin: 8px 0;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+    .answers { display: grid; gap: 8px; }
+    .answer { text-align: left; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 8px 4px; text-align: left; }
+    th { color: var(--muted); }
+    .you { color: #0e7490; font-weight: 700; }
+
+    @media (max-width: 1100px) {
+      .grid { grid-template-columns: 1fr; }
+      .chapter-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="title">ChemGamify - Тарау/Тақырып</div>
+      <a class="back" href="index.html">Басты бет</a>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Мұғалім</h2>
+        <div class="row">
+          <div class="field">
+            <label>Мұғалім аты</label>
+            <input id="teacherName" />
+          </div>
+          <div class="field">
+            <label>Сынып</label>
+            <input id="classLabel" placeholder="10A" />
+          </div>
+        </div>
+        <div class="row">
+          <button id="createClassBtn" class="btn main">Сынып ашу</button>
+          <button id="copyCodeBtn" class="btn">Код көшіру</button>
+          <button id="teacherDemoBtn" class="btn">Мұғалім демо</button>
+        </div>
+        <div class="stats">
+          <span class="pill">Код: <b id="classCodeView">-</b></span>
+          <span class="pill">Бекітілген: <b id="lockView">еркін</b></span>
+        </div>
+        <p id="teacherStatus" class="note">Сынып ашылмаған.</p>
+      </section>
+
+      <section class="card">
+        <h2>Оқушы</h2>
+        <div class="row">
+          <div class="field">
+            <label>Сынып коды (6 таңба)</label>
+            <input id="joinCode" placeholder="A7K2PQ" />
+          </div>
+          <div class="field">
+            <label>Аты-жөні</label>
+            <input id="newStudentName" />
+          </div>
+        </div>
+        <div class="row">
+          <button id="joinClassBtn" class="btn main">Кіру</button>
+        </div>
+        <p id="studentStatus" class="note">Код + аты-жөні енгізсең, автоматты түрде кіресің.</p>
+      </section>
+
+      <section class="card">
+        <h2>Күн Режимі (Мұғалім бекітеді)</h2>
+        <div class="row">
+          <div class="field">
+            <label>Күн тарауы</label>
+            <select id="lockTopicSelect"></select>
+          </div>
+          <div class="field">
+            <label>Күн ойыны</label>
+            <select id="lockModeSelect"></select>
+          </div>
+        </div>
+        <div class="row">
+          <button id="enableLockBtn" class="btn">Бекіту</button>
+          <button id="disableLockBtn" class="btn warn">Еркін режим</button>
+        </div>
+        <p class="note">Бекітілсе, оқушы тек сол режимді ойнайды.</p>
+      </section>
+
+      <section class="card full">
+        <h2>Тараулар Нұсқаулығы</h2>
+        <p class="note">Тарауды бас. Ішіндегі әр тақырыпта 4 тапсырма батырмасы бар (Тест/Блум/STEM/Аралас).</p>
+        <div id="chapterGrid" class="chapter-grid"></div>
+      </section>
+
+      <section class="card full">
+        <h2>Ойын Алаңы</h2>
+        <div class="stats">
+          <span class="pill">Оқушы: <b id="sName">-</b></span>
+          <span class="pill">Сынып: <b id="sClass">-</b></span>
+          <span class="pill">Тарау: <b id="sTopic">-</b></span>
+          <span class="pill">Режим: <b id="sMode">-</b></span>
+          <span class="pill">Сұрақ: <b id="qCount">0/0</b></span>
+          <span class="pill">Ұпай: <b id="scoreView">0</b></span>
+        </div>
+        <p id="questionText" class="q">Тарауды ашып, режимді таңдаңыз.</p>
+        <div id="answers" class="answers"></div>
+        <div class="row">
+          <button id="finishStudentGameBtn" class="btn">Ойынды аяқтау</button>
+        </div>
+        <p id="gameStatus" class="note"></p>
+      </section>
+
+      <section class="card full">
+        <h2>Сынып Рейтингі</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Оқушы</th>
+              <th>Жалпы</th>
+              <th>Тест</th>
+              <th>Блум</th>
+              <th>STEM</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody">
+            <tr><td colspan="6" class="note">Рейтинг бос.</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "chemgamify_classes_v5";
+    const MODES = [
+      { key: "quiz15", label: "Тест-спринт (15)", count: 15, p: 10 },
+      { key: "bloom5", label: "Блум (5)", count: 5, p: 15 },
+      { key: "stem5", label: "STEM (5)", count: 5, p: 20 },
+      { key: "mix", label: "Аралас (15+5+5)", count: 25, p: 12 }
+    ];
+
+    const CHAPTERS = [
+      { key: "atom", title: "I тарау. Атом құрылысы", topics: ["Атом ядросы", "Изотоптар", "Электрондық конфигурация", "Квант сандары"] },
+      { key: "period", title: "II тарау. Периодтылық", topics: ["Периодтық заң", "Атом радиусы", "Иондану энергиясы", "Электртерістілік"] },
+      { key: "bond", title: "III тарау. Химиялық байланыс", topics: ["Коваленттік байланыс", "Иондық байланыс", "Металдық байланыс", "Сутектік байланыс"] },
+      { key: "sto", title: "IV тарау. Стехиометрия", topics: ["Моль", "Молярлық масса", "Газ көлемі", "Есептер"] },
+      { key: "thermo", title: "V тарау. Термодинамика", topics: ["Энтальпия", "Экзо/эндотермия", "Гесс заңы", "Энергия балансы"] },
+      { key: "kin", title: "VI тарау. Кинетика", topics: ["Реакция жылдамдығы", "Катализатор", "Концентрация әсері", "Температура әсері"] },
+      { key: "eq", title: "VII тарау. Тепе-теңдік", topics: ["Қайтымды реакциялар", "Le Chatelier", "Тепе-теңдік константасы", "Ығысу"] },
+      { key: "redox", title: "VIII тарау. ТТР", topics: ["Тотығу дәрежесі", "Тотықтырғыш/тотықсыздандырғыш", "Электрон баланс", "Электролиз"] },
+      { key: "ana", title: "IX тарау. Аналитикалық әдістер", topics: ["Сапалық талдау", "Сандық талдау", "Хроматография", "Спектроскопия"] },
+      { key: "g17", title: "X тарау. 17-топ элементтері", topics: ["Галогендер", "Қасиеттер өзгерісі", "Хлор қосылыстары", "Қолданылуы"] },
+      { key: "g2", title: "XI тарау. 2-топ элементтері", topics: ["Сілтілік жер металдары", "Физ. қасиеттер", "Хим. қасиеттер", "Қосылыстары"] },
+      { key: "org", title: "XII тарау. Органикалық кіріспе", topics: ["Көмірсутектер", "Изомерия", "Гомологтық қатар", "Функционалдық топ"] },
+      { key: "unsat", title: "XIII тарау. Қанықпаған көмірсутектер", topics: ["Алкендер", "Алкиндер", "Қосылу реакциясы", "Полимерлену"] },
+      { key: "halo", title: "XIV тарау. Галогеналкандар", topics: ["Құрылысы", "Орынбасу реакциясы", "Нуклеофилдік механизм", "Қолданылуы"] },
+      { key: "alc", title: "XV тарау. Спирттер", topics: ["Бір атомды спирттер", "Көп атомды спирттер", "Тотығу", "Эфирлену"] }
+    ];
+
+    const state = {
+      classes: readClasses(),
+      teacherClassCode: "",
+      student: { classCode: "", studentId: "", name: "" },
+      game: { active: false, topic: "", mode: "", items: [], index: 0, score: 0 }
+    };
+
+    const el = {
+      teacherName: document.getElementById("teacherName"),
+      classLabel: document.getElementById("classLabel"),
+      createClassBtn: document.getElementById("createClassBtn"),
+      copyCodeBtn: document.getElementById("copyCodeBtn"),
+      teacherDemoBtn: document.getElementById("teacherDemoBtn"),
+      classCodeView: document.getElementById("classCodeView"),
+      lockView: document.getElementById("lockView"),
+      lockTopicSelect: document.getElementById("lockTopicSelect"),
+      lockModeSelect: document.getElementById("lockModeSelect"),
+      enableLockBtn: document.getElementById("enableLockBtn"),
+      disableLockBtn: document.getElementById("disableLockBtn"),
+      teacherStatus: document.getElementById("teacherStatus"),
+
+      joinCode: document.getElementById("joinCode"),
+      newStudentName: document.getElementById("newStudentName"),
+      joinClassBtn: document.getElementById("joinClassBtn"),
+      studentStatus: document.getElementById("studentStatus"),
+
+      chapterGrid: document.getElementById("chapterGrid"),
+
+      sName: document.getElementById("sName"),
+      sClass: document.getElementById("sClass"),
+      sTopic: document.getElementById("sTopic"),
+      sMode: document.getElementById("sMode"),
+      qCount: document.getElementById("qCount"),
+      scoreView: document.getElementById("scoreView"),
+      questionText: document.getElementById("questionText"),
+      answers: document.getElementById("answers"),
+      finishStudentGameBtn: document.getElementById("finishStudentGameBtn"),
+      gameStatus: document.getElementById("gameStatus"),
+
+      leaderboardBody: document.getElementById("leaderboardBody")
+    };
+
+    function readClasses() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+      catch (_) { return {}; }
+    }
+    function saveClasses() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.classes)); }
+    function norm(v) { return (v || "").trim(); }
+    function normClass(v) { return norm(v).toUpperCase().replace(/\s+/g, ""); }
+    function uid() { return `${Date.now()}_${Math.random().toString(16).slice(2, 8)}`; }
+    function randomCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let out = "";
+      for (let i = 0; i < 6; i++) out += chars[Math.floor(Math.random() * chars.length)];
+      return out;
+    }
+    function modeLabel(key) { return MODES.find((m) => m.key === key)?.label || key; }
+    function topicTitle(key) { return CHAPTERS.find((c) => c.key === key)?.title || key; }
+    function currentTeacherClass() { return state.teacherClassCode ? state.classes[state.teacherClassCode] : null; }
+    function currentStudentClass() { return state.student.classCode ? state.classes[state.student.classCode] : null; }
+    function setStatus(id, text, ok) { el[id].textContent = text; el[id].className = ok ? "note ok" : "note bad"; }
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function buildSelectors() {
+      [el.lockTopicSelect].forEach((sel) => {
+        sel.innerHTML = "";
+        CHAPTERS.forEach((c) => {
+          const o = document.createElement("option");
+          o.value = c.key;
+          o.textContent = c.title;
+          sel.appendChild(o);
+        });
+      });
+      el.lockModeSelect.innerHTML = "";
+      MODES.forEach((m) => {
+        const o = document.createElement("option");
+        o.value = m.key;
+        o.textContent = m.label;
+        el.lockModeSelect.appendChild(o);
+      });
+    }
+
+    function createClass() {
+      const teacher = norm(el.teacherName.value);
+      const classLabel = normClass(el.classLabel.value);
+      if (!teacher || !classLabel) return setStatus("teacherStatus", "Мұғалім және сыныпты толтыр.", false);
+
+      let code = randomCode();
+      while (state.classes[code]) code = randomCode();
+
+      state.classes[code] = {
+        code,
+        teacher,
+        classLabel,
+        students: [],
+        lock: { enabled: false, topic: "", mode: "" },
+        leaderboard: {}
+      };
+      state.teacherClassCode = code;
+      saveClasses();
+      refreshTeacherPanel();
+      refreshLeaderboard();
+      setStatus("teacherStatus", `Сынып ашылды. Код: ${code}`, true);
+    }
+
+    async function copyCode() {
+      const cls = currentTeacherClass();
+      if (!cls) return setStatus("teacherStatus", "Алдымен сынып аш.", false);
+      try {
+        await navigator.clipboard.writeText(cls.code);
+        setStatus("teacherStatus", "Код көшірілді.", true);
+      } catch (_) {
+        setStatus("teacherStatus", `Код: ${cls.code}`, true);
+      }
+    }
+
+    function enableLock() {
+      const cls = currentTeacherClass();
+      if (!cls) return setStatus("teacherStatus", "Белсенді сынып жоқ.", false);
+      cls.lock.enabled = true;
+      cls.lock.topic = el.lockTopicSelect.value;
+      cls.lock.mode = el.lockModeSelect.value;
+      saveClasses();
+      refreshTeacherPanel();
+      setStatus("teacherStatus", `Бекітілді: ${topicTitle(cls.lock.topic)} / ${modeLabel(cls.lock.mode)}`, true);
+    }
+
+    function disableLock() {
+      const cls = currentTeacherClass();
+      if (!cls) return setStatus("teacherStatus", "Белсенді сынып жоқ.", false);
+      cls.lock.enabled = false;
+      saveClasses();
+      refreshTeacherPanel();
+      setStatus("teacherStatus", "Еркін режим қосылды.", true);
+    }
+
+    function joinClass() {
+      const cls = state.classes[norm(el.joinCode.value).toUpperCase()];
+      if (!cls) return setStatus("studentStatus", "Сынып коды қате.", false);
+      const name = norm(el.newStudentName.value);
+      if (!name) return setStatus("studentStatus", "Аты-жөніңді енгіз.", false);
+
+      let st = cls.students.find((s) => s.name.toLowerCase() === name.toLowerCase());
+      if (!st) {
+        st = { id: uid(), name };
+        cls.students.push(st);
+      }
+      state.student = { classCode: cls.code, studentId: st.id, name: st.name };
+      saveClasses();
+      setHeader(cls.lock.topic || CHAPTERS[0].key, cls.lock.mode || "quiz15");
+      refreshLeaderboard();
+      setStatus("studentStatus", `Кіру сәтті: ${st.name}`, true);
+    }
+
+    function teacherDemoJoin() {
+      const cls = currentTeacherClass();
+      if (!cls) return setStatus("teacherStatus", "Алдымен сынып аш.", false);
+      state.student = {
+        classCode: cls.code,
+        studentId: "__teacher_demo__",
+        name: `${cls.teacher} (demo)`
+      };
+      setHeader(cls.lock.topic || CHAPTERS[0].key, cls.lock.mode || "quiz15");
+      refreshLeaderboard();
+      setStatus("teacherStatus", "Мұғалім demo режимі қосылды.", true);
+    }
+
+    function buildQuestionPool(chapterKey, modeKey, topicName) {
+      const chapter = CHAPTERS.find((c) => c.key === chapterKey);
+      const mode = MODES.find((m) => m.key === modeKey);
+      const count = mode.count;
+      const basePoints = mode.p;
+      const pool = [];
+      for (let i = 0; i < count; i++) {
+        const t = topicName || chapter.topics[i % chapter.topics.length];
+        pool.push({
+          q: `${chapter.title} - ${t}: ${i + 1}-сұрақ`,
+          a: ["A нұсқа", "B нұсқа", "C нұсқа", "D нұсқа"],
+          c: i % 4,
+          p: basePoints
+        });
+      }
+      return shuffle(pool);
+    }
+
+    function setHeader(chapterKey, modeKey, topicName) {
+      const cls = currentStudentClass();
+      el.sName.textContent = state.student.name || "-";
+      el.sClass.textContent = cls ? cls.classLabel : "-";
+      el.sTopic.textContent = topicName ? `${topicTitle(chapterKey)} / ${topicName}` : topicTitle(chapterKey);
+      el.sMode.textContent = modeLabel(modeKey);
+    }
+
+    function startGameFromChapter(chapterKey, modeKey, topicName) {
+      const cls = currentStudentClass() || currentTeacherClass();
+      if (!cls) return setStatus("gameStatus", "Алдымен сыныпқа кір немесе мұғалім демо режимін қос.", false);
+      if (cls.lock.enabled && (cls.lock.topic !== chapterKey || cls.lock.mode !== modeKey)) {
+        return setStatus("gameStatus", `Бүгін бекітілген: ${topicTitle(cls.lock.topic)} / ${modeLabel(cls.lock.mode)}`, false);
+      }
+
+      state.game = {
+        active: true,
+        topic: chapterKey,
+        mode: modeKey,
+        items: buildQuestionPool(chapterKey, modeKey, topicName),
+        index: 0,
+        score: 0
+      };
+      setHeader(chapterKey, modeKey, topicName);
+      renderQuestion();
+      setStatus("gameStatus", `Ойын басталды: ${topicName || topicTitle(chapterKey)}`, true);
+    }
+
+    function renderQuestion() {
+      if (!state.game.active) return;
+      const item = state.game.items[state.game.index];
+      if (!item) return finishGame();
+      el.qCount.textContent = `${state.game.index + 1}/${state.game.items.length}`;
+      el.scoreView.textContent = String(state.game.score);
+      el.questionText.textContent = item.q;
+      el.answers.innerHTML = "";
+      item.a.forEach((a, i) => {
+        const b = document.createElement("button");
+        b.className = "btn answer";
+        b.textContent = a;
+        b.onclick = () => answer(i);
+        el.answers.appendChild(b);
+      });
+    }
+
+    function answer(choice) {
+      if (!state.game.active) return;
+      const item = state.game.items[state.game.index];
+      if (choice === item.c) state.game.score += item.p;
+      state.game.index++;
+      renderQuestion();
+    }
+
+    function ensureRow(cls, sid) {
+      if (!cls.leaderboard[sid]) cls.leaderboard[sid] = { total: 0, quiz: 0, bloom: 0, stem: 0 };
+      return cls.leaderboard[sid];
+    }
+
+    function finishGame() {
+      if (!state.game.active) return setStatus("gameStatus", "Белсенді ойын жоқ.", false);
+      const cls = currentStudentClass();
+      if (!cls) {
+        state.game.active = false;
+        el.answers.innerHTML = "";
+        el.questionText.textContent = "Демо аяқталды. Басқа тараудан қайта бастауға болады.";
+        el.qCount.textContent = "0/0";
+        el.scoreView.textContent = "0";
+        return setStatus("gameStatus", `Демо ұпай: ${state.game.score}`, true);
+      }
+      const row = ensureRow(cls, state.student.studentId);
+      const score = state.game.score;
+      const mode = state.game.mode;
+      if (mode === "quiz15") row.quiz = Math.max(row.quiz, score);
+      if (mode === "bloom5") row.bloom = Math.max(row.bloom, score);
+      if (mode === "stem5") row.stem = Math.max(row.stem, score);
+      if (mode === "mix") {
+        row.quiz = Math.max(row.quiz, Math.min(score, 150));
+        row.bloom = Math.max(row.bloom, Math.min(Math.max(score - 150, 0), 75));
+        row.stem = Math.max(row.stem, Math.min(Math.max(score - 225, 0), 100));
+      }
+      row.total = row.quiz + row.bloom + row.stem;
+      saveClasses();
+
+      state.game.active = false;
+      el.answers.innerHTML = "";
+      el.questionText.textContent = "Аяқталды. Басқа тараудан қайта бастауға болады.";
+      el.qCount.textContent = "0/0";
+      el.scoreView.textContent = "0";
+      refreshLeaderboard();
+      setStatus("gameStatus", `Ұпай: ${score}`, true);
+    }
+
+    function buildChapterCards() {
+      el.chapterGrid.innerHTML = "";
+      CHAPTERS.forEach((c) => {
+        const card = document.createElement("article");
+        card.className = "chapter";
+        const topicsHtml = c.topics.map((t, topicIndex) => `
+          <div class="topic-card">
+            <div class="topic-title">${t}</div>
+            <div class="task-hint">Осы тақырыптан тапсырма таңда:</div>
+            <div class="mode-grid">
+              <button class="btn mode-btn" data-topic="${c.key}" data-subtopic="${topicIndex}" data-mode="quiz15">Тест-спринт</button>
+              <button class="btn mode-btn" data-topic="${c.key}" data-subtopic="${topicIndex}" data-mode="bloom5">Блум</button>
+              <button class="btn mode-btn" data-topic="${c.key}" data-subtopic="${topicIndex}" data-mode="stem5">STEM</button>
+              <button class="btn mode-btn" data-topic="${c.key}" data-subtopic="${topicIndex}" data-mode="mix">Аралас</button>
+            </div>
+          </div>
+        `).join("");
+
+        card.innerHTML = `
+          <button class="chapter-head" type="button">${c.title}</button>
+          <div class="chapter-body">
+            ${topicsHtml}
+          </div>
+        `;
+        el.chapterGrid.appendChild(card);
+      });
+
+      el.chapterGrid.querySelectorAll(".chapter-head").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          btn.closest(".chapter").classList.toggle("open");
+        });
+      });
+      el.chapterGrid.querySelectorAll("[data-topic]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const chapter = CHAPTERS.find((c) => c.key === btn.dataset.topic);
+          const topicName = chapter?.topics?.[Number(btn.dataset.subtopic)] || "";
+          startGameFromChapter(btn.dataset.topic, btn.dataset.mode, topicName);
+        });
+      });
+    }
+
+    function refreshTeacherPanel() {
+      const cls = currentTeacherClass();
+      if (!cls) {
+        el.classCodeView.textContent = "-";
+        el.lockView.textContent = "еркін";
+        return;
+      }
+      el.classCodeView.textContent = cls.code;
+      el.lockView.textContent = cls.lock.enabled ? `${topicTitle(cls.lock.topic)} / ${modeLabel(cls.lock.mode)}` : "еркін";
+      el.teacherName.value = cls.teacher;
+      el.classLabel.value = cls.classLabel;
+      if (cls.lock.topic) el.lockTopicSelect.value = cls.lock.topic;
+      if (cls.lock.mode) el.lockModeSelect.value = cls.lock.mode;
+    }
+
+    function refreshLeaderboard() {
+      const cls = currentStudentClass() || currentTeacherClass();
+      if (!cls) {
+        el.leaderboardBody.innerHTML = `<tr><td colspan="6" class="note">Рейтинг бос.</td></tr>`;
+        return;
+      }
+      const rows = cls.students
+        .map((s) => {
+          const r = cls.leaderboard[s.id] || { total: 0, quiz: 0, bloom: 0, stem: 0 };
+          return { name: s.name, me: s.id === state.student.studentId, ...r };
+        })
+        .sort((a, b) => b.total - a.total);
+      if (!rows.length) {
+        el.leaderboardBody.innerHTML = `<tr><td colspan="6" class="note">Рейтинг бос.</td></tr>`;
+        return;
+      }
+      el.leaderboardBody.innerHTML = rows.map((r, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td class="${r.me ? "you" : ""}">${r.name}</td>
+          <td>${r.total}</td>
+          <td>${r.quiz}</td>
+          <td>${r.bloom}</td>
+          <td>${r.stem}</td>
+        </tr>
+      `).join("");
+    }
+
+    el.createClassBtn.addEventListener("click", createClass);
+    el.copyCodeBtn.addEventListener("click", copyCode);
+    el.teacherDemoBtn.addEventListener("click", teacherDemoJoin);
+    el.enableLockBtn.addEventListener("click", enableLock);
+    el.disableLockBtn.addEventListener("click", disableLock);
+    el.joinClassBtn.addEventListener("click", joinClass);
+    el.finishStudentGameBtn.addEventListener("click", finishGame);
+
+    buildSelectors();
+    buildChapterCards();
+    refreshTeacherPanel();
+    refreshLeaderboard();
+    setStatus("gameStatus", "Тарауды басып, тақырыптарды ашып, режим таңдаңыз.", true);
+  </script>
+</body>
+</html>
